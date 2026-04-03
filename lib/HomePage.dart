@@ -375,24 +375,23 @@ class _HomeContentState extends State<HomeContent> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(product["price"]!, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.deepPurple)),
-                                  GestureDetector(
-                                    onTap: () async {
-                                      await Navigator.push(context, MaterialPageRoute(builder: (context) => BuyPage(product: product)));
-                                      setState(() {});
-                                      widget.onWishlistChanged();
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.all(5),
-                                      decoration: BoxDecoration(
-                                        color: Colors.deepPurple,
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: const Icon(Icons.add, color: Colors.white, size: 18),
+                                  ElevatedButton(onPressed: () {
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => BuyPage(product: product)));
+                                  },
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.deepPurple,
+                                      minimumSize: Size(80, 40),
                                     ),
-                                  ),
+                                      child: Text("Buy now",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      )),
                                 ],
                               ),
-                            ],
+                            ]
                           ),
                         ),
                       ],
@@ -401,6 +400,17 @@ class _HomeContentState extends State<HomeContent> {
                 },
               ),
             ),
+            Center(
+            child: ElevatedButton(onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const NewArrivalsPage()));
+            }, child: Text("View all..",
+            style:  TextStyle(
+              color: Colors.deepPurple,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+            )),
+            )
           ],
         ),
       ),

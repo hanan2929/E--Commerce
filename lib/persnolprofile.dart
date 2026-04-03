@@ -1,11 +1,51 @@
 import 'package:flutter/material.dart';
+import 'userdata.dart';
 
-class PersnolprofilePage extends StatelessWidget {
+class PersnolprofilePage extends StatefulWidget {
   const PersnolprofilePage({super.key});
+
+  @override
+  State<PersnolprofilePage> createState() => _PersnolprofilePageState();
+}
+
+class _PersnolprofilePageState extends State<PersnolprofilePage> {
+  bool _isEditing = false;
+  late TextEditingController _nameController;
+  late TextEditingController _contactController;
+  late TextEditingController _emailController;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: UserData.name);
+    _contactController = TextEditingController(text: UserData.contact);
+    _emailController = TextEditingController(text: UserData.email);
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _contactController.dispose();
+    _emailController.dispose();
+    super.dispose();
+  }
+
+  void _toggleEdit() {
+    setState(() {
+      if (_isEditing) {
+        // Save data to UserData when switching back from edit mode
+        UserData.name = _nameController.text;
+        UserData.contact = _contactController.text;
+        UserData.email = _emailController.text;
+      }
+      _isEditing = !_isEditing;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF3E5F5), // Light purple background
+      backgroundColor: const Color(0xFFF3E5F5),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -18,6 +58,13 @@ class PersnolprofilePage extends StatelessWidget {
               color: Colors.deepPurple),
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: _toggleEdit,
+            icon: Icon(_isEditing ? Icons.check : Icons.edit,
+                color: Colors.deepPurple),
+          )
+        ],
         iconTheme: const IconThemeData(color: Colors.deepPurple),
       ),
       body: SingleChildScrollView(
@@ -33,11 +80,14 @@ class PersnolprofilePage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 50),
-              _buildProfileInfo(Icons.person, "Name", "Abdul Hanan"),
+              _buildProfileInfo(
+                  Icons.person, "Name", _nameController, _isEditing),
               const SizedBox(height: 25),
-              _buildProfileInfo(Icons.contact_page, "Contact No.", "0312 3456789"),
+              _buildProfileInfo(
+                  Icons.contact_page, "Contact No.", _contactController, _isEditing),
               const SizedBox(height: 25),
-              _buildProfileInfo(Icons.email, "E-mail", "test@gmail.com"),
+              _buildProfileInfo(
+                  Icons.email, "E-mail", _emailController, _isEditing),
             ],
           ),
         ),
@@ -45,7 +95,8 @@ class PersnolprofilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileInfo(IconData icon, String title, String value) {
+  Widget _buildProfileInfo(IconData icon, String title,
+      TextEditingController controller, bool isEditing) {
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
@@ -63,26 +114,44 @@ class PersnolprofilePage extends StatelessWidget {
         children: [
           Icon(icon, size: 40, color: Colors.deepPurple),
           const SizedBox(width: 25),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: Colors.grey,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.grey,
+                  ),
                 ),
-              ),
-              Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black,
-                ),
-              ),
-            ],
+                isEditing
+                    ? TextField(
+                        controller: controller,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                        ),
+                        decoration: const InputDecoration(
+                          isDense: true,
+                          contentPadding: EdgeInsets.symmetric(vertical: 8),
+                          border: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.deepPurple),
+                          ),
+                        ),
+                      )
+                    : Text(
+                        controller.text,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                        ),
+                      ),
+              ],
+            ),
           )
         ],
       ),
