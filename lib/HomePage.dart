@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'brands.dart';
 import 'newArrivals.dart';
 import 'LoginPage.dart';
 import 'setting.dart';
@@ -17,10 +16,10 @@ import 'wishlist.dart';
 import 'persnolprofile.dart';
 import 'wishlist_data.dart';
 import 'Buy.dart';
+import 'addpost.dart';
 
 class HomePage extends StatefulWidget {
-
-    HomePage({super.key});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -39,7 +38,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF3E5F5), // Attractive light purple background
+      backgroundColor: const Color(0xFFF3E5F5),
       body: PageView(
         controller: _pageController,
         onPageChanged: (index) {
@@ -115,6 +114,38 @@ class _HomeContentState extends State<HomeContent> {
     {"image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7oPzRyUnqKv-CeY8R4vKqj2z48LKXa-W5Sw&s", "name": "Nike hoodie", "price": "\$145"}
   ];
 
+  late List<Map<String, String>> _filteredProducts;
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _filteredProducts = products;
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  @override
+  void dispose() {
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged() {
+    setState(() {
+      _filteredProducts = products
+          .where((product) => product["name"]!
+              .toLowerCase()
+              .contains(_searchController.text.toLowerCase()))
+          .toList();
+    });
+  }
+
+  Future<void> _refreshPage() async {
+    await Future.delayed(const Duration(seconds: 2));
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -138,9 +169,7 @@ class _HomeContentState extends State<HomeContent> {
           padding: EdgeInsets.zero,
           children: [
             const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.deepPurple,
-              ),
+              decoration: BoxDecoration(color: Colors.deepPurple),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -151,10 +180,7 @@ class _HomeContentState extends State<HomeContent> {
                     child: Icon(Icons.person, color: Colors.deepPurple),
                   ),
                   SizedBox(height: 10),
-                  Text(
-                    'Welcome User',
-                    style: TextStyle(color: Colors.white, fontSize: 18),
-                  ),
+                  Text('Welcome User', style: TextStyle(color: Colors.white, fontSize: 18)),
                 ],
               ),
             ),
@@ -193,225 +219,236 @@ class _HomeContentState extends State<HomeContent> {
               title: const Text('Logout', style: TextStyle(color: Colors.red)),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>  LoginPage()));
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.add, color: Colors.green),
+              title: const Text('Add new item', style: TextStyle(color: Colors.green)),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) =>  AddpostPage()));
               },
             ),
           ],
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: TextField(
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  labelText: "Search",
-                  hintText: "Search your favorite shoes",
-                  prefixIcon: const Icon(Icons.search, color: Colors.deepPurple),
-                  suffixIcon: IconButton(icon: const Icon(Icons.mic, color: Colors.deepPurple), onPressed: () {}),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                    borderSide: BorderSide(color: Colors.deepPurple.withOpacity(0.2)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                    borderSide: const BorderSide(color: Colors.deepPurple),
+      body: RefreshIndicator(
+        onRefresh: _refreshPage,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    labelText: "Search",
+                    hintText: "Search your favorite shoes",
+                    prefixIcon: const Icon(Icons.search, color: Colors.deepPurple),
+                    suffixIcon: const Icon(Icons.mic, color: Colors.deepPurple),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: const BorderSide(color: Color(0x33673AB7)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: const BorderSide(color: Colors.deepPurple),
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 25),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Text("Categories", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.deepPurple)),
-            ),
-            const SizedBox(height: 15),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.only(left: 20),
-              child: Row(
-                children: brands.map((brand) {
-                  return GestureDetector(
-                    onTap: () {
-                      Widget page;
-                      switch (brand["name"]) {
-                        case "Nike": page = const NikePage(); break;
-                        case "Adidas": page = const AdidasPage(); break;
-                        case "Puma": page = const PumaPage(); break;
-                        case "Reebok": page = const ReebokPage(); break;
-                        case "Jordan": page = const JordanPage(); break;
-                        case "NB": page = const NewbalancePage(); break;
-                        case "fila": page = const FilaPage(); break;
-                        case "Amiri": page = const AmiriPage(); break;
-                        case "LV": page = const LvPage(); break;
-                        case "Gucci": page = const GucciPage(); break;
-                        default: return;
-                      }
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => page));
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.only(right: 15),
-                      padding: const EdgeInsets.all(10),
-                      width: 80,
+              const SizedBox(height: 25),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Text("Categories", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.deepPurple)),
+              ),
+              const SizedBox(height: 15),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.only(left: 20),
+                child: Row(
+                  children: brands.map((brand) {
+                    return GestureDetector(
+                      onTap: () {
+                        Widget page;
+                        switch (brand["name"]) {
+                          case "Nike": page = const NikePage(); break;
+                          case "Adidas": page = const AdidasPage(); break;
+                          case "Puma": page = const PumaPage(); break;
+                          case "Reebok": page = const ReebokPage(); break;
+                          case "Jordan": page = const JordanPage(); break;
+                          case "NB": page = const NewbalancePage(); break;
+                          case "fila": page = const FilaPage(); break;
+                          case "Amiri": page = const AmiriPage(); break;
+                          case "LV": page = const LvPage(); break;
+                          case "Gucci": page = const GucciPage(); break;
+                          default: return;
+                        }
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => page));
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.only(right: 15),
+                        padding: const EdgeInsets.all(10),
+                        width: 80,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color(0x1A673AB7),
+                              spreadRadius: 1,
+                              blurRadius: 5,
+                            )
+                          ],
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.network(brand["logo"]!, width: 40, height: 40, errorBuilder: (context, error, stackTrace) => const Icon(Icons.error)),
+                            const SizedBox(height: 8),
+                            Text(brand["name"]!, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+              const SizedBox(height: 25),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text("Popular Now", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.deepPurple)),
+                    TextButton(
+                      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const NewArrivalsPage())),
+                      child: const Text("See all", style: TextStyle(color: Colors.deepPurple, fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: _filteredProducts.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 15,
+                    mainAxisSpacing: 15,
+                    childAspectRatio: 0.75,
+                  ),
+                  itemBuilder: (context, index) {
+                    final product = _filteredProducts[index];
+                    bool isWishlisted = WishlistData.wishlistItems.any((e) => e['name'] == product['name']);
+
+                    return Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(15),
-                        boxShadow: [
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: const [
                           BoxShadow(
-                            color: Colors.deepPurple.withOpacity(0.1),
+                            color: Color(0x1A673AB7),
                             spreadRadius: 1,
-                            blurRadius: 5,
+                            blurRadius: 10,
                           )
                         ],
                       ),
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Image.network(brand["logo"]!, width: 40, height: 40, errorBuilder: (context, error, stackTrace) => const Icon(Icons.error)),
-                          const SizedBox(height: 8),
-                          Text(brand["name"]!, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
-                        ],
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-            const SizedBox(height: 25),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text("Popular Now", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.deepPurple)),
-                  TextButton(
-                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const NewArrivalsPage())),
-                    child: const Text("See all", style: TextStyle(color: Colors.deepPurple, fontWeight: FontWeight.bold)),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: products.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 15,
-                  mainAxisSpacing: 15,
-                  childAspectRatio: 0.75,
-                ),
-                itemBuilder: (context, index) {
-                  final product = products[index];
-                  bool isWishlisted = WishlistData.wishlistItems.any((e) => e['name'] == product['name']);
-
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.deepPurple.withOpacity(0.1),
-                          spreadRadius: 1,
-                          blurRadius: 10,
-                        )
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Stack(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(15),
-                                decoration: BoxDecoration(
-                                  color: Colors.deepPurple.withOpacity(0.05),
-                                  borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-                                ),
-                                child: Center(
-                                  child: Image.network(product["image"]!, fit: BoxFit.contain),
-                                ),
-                              ),
-                              Positioned(
-                                top: 10,
-                                right: 10,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      if (isWishlisted) {
-                                        WishlistData.removeItem(product);
-                                      } else {
-                                        WishlistData.addItem(product);
-                                      }
-                                    });
-                                    widget.onWishlistChanged();
-                                  },
-                                  child: Icon(
-                                    isWishlisted ? Icons.favorite : Icons.favorite_border,
-                                    color: isWishlisted ? Colors.red : Colors.grey,
-                                    size: 22,
+                          Expanded(
+                            child: Stack(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(15),
+                                  decoration: const BoxDecoration(
+                                    color: Color(0x0D673AB7),
+                                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                                  ),
+                                  child: Center(
+                                    child: Image.network(product["image"]!, fit: BoxFit.contain),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(12),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(product["name"]!, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis),
-                              const SizedBox(height: 5),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(product["price"]!, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.deepPurple)),
-                                  ElevatedButton(onPressed: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => BuyPage(product: product)));
-                                  },
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.deepPurple,
-                                      minimumSize: Size(80, 40),
+                                Positioned(
+                                  top: 10,
+                                  right: 10,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        if (isWishlisted) {
+                                          WishlistData.removeItem(product);
+                                        } else {
+                                          WishlistData.addItem(product);
+                                        }
+                                      });
+                                      widget.onWishlistChanged();
+                                    },
+                                    child: Icon(
+                                      isWishlisted ? Icons.favorite : Icons.favorite_border,
+                                      color: isWishlisted ? Colors.red : Colors.grey,
+                                      size: 22,
                                     ),
-                                      child: Text("Buy now",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      )),
-                                ],
-                              ),
-                            ]
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
+                          Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(product["name"]!, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis),
+                                const SizedBox(height: 5),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(product["price"]!, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.deepPurple)),
+                                    GestureDetector(
+                                      onTap: () async {
+                                        await Navigator.push(context, MaterialPageRoute(builder: (context) => BuyPage(product: product)));
+                                        setState(() {});
+                                        widget.onWishlistChanged();
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                          color: Colors.deepPurple,
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: const Icon(Icons.add, color: Colors.white, size: 18),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ),
-            ),
-            Center(
-            child: ElevatedButton(onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const NewArrivalsPage()));
-            }, child: Text("View all..",
-            style:  TextStyle(
-              color: Colors.deepPurple,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-            )),
-            )
-          ],
+              const SizedBox(height: 20),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const NewArrivalsPage())),
+                  child: const Text("View all..", style: TextStyle(color: Colors.deepPurple, fontSize: 18, fontWeight: FontWeight.bold)),
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );

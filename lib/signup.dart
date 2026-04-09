@@ -1,18 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'userdata.dart';
 
-class SignupPage extends StatelessWidget {
+class SignupPage extends StatefulWidget {
+  SignupPage({super.key});
+
+  @override
+  State<SignupPage> createState() => _SignupPageState();
+}
+
+class _SignupPageState extends State<SignupPage> {
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  SignupPage({super.key});
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF3E5F5), // Light purple background
+      backgroundColor: const Color(0xFFF3E5F5),
       body: SingleChildScrollView(
-        child: Column(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
               height: 220,
@@ -45,14 +58,18 @@ class SignupPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  TextField(
+                  TextFormField(
                     controller: nameController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) return "Enter name";
+                      return null;
+                    },
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
-                      labelText: "Username",
-                      hintText: "Enter username",
-                      prefixIcon: const Icon(Icons.person, color: Colors.deepPurple),
+                      labelText: "Name",
+                      hintText: "Enter your Name",
+                      prefixIcon: const Icon(Icons.email, color: Colors.deepPurple),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
                         borderSide: BorderSide(color: Colors.deepPurple.withOpacity(0.2)),
@@ -64,8 +81,13 @@ class SignupPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  TextField(
+                  TextFormField(
                     controller: emailController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) return "Enter email";
+                      if (!RegExp(r'\S+@\S+\.\S+').hasMatch(value)) return "Enter valid email";
+                      return null;
+                    },
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
@@ -83,15 +105,19 @@ class SignupPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  TextField(
+                  TextFormField(
                     controller: passwordController,
-                    obscureText: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) return "Enter password";
+                      if (value.length < 6) return "Password must be at least 6 characters";
+                      return null;
+                    },
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
                       labelText: "Password",
-                      hintText: "Enter Password",
-                      prefixIcon: const Icon(Icons.lock, color: Colors.deepPurple),
+                      hintText: "Enter your password",
+                      prefixIcon: const Icon(Icons.email, color: Colors.deepPurple),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
                         borderSide: BorderSide(color: Colors.deepPurple.withOpacity(0.2)),
@@ -113,11 +139,46 @@ class SignupPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(30),
                         ),
                       ),
-                      onPressed: () {
-                        UserData.name = nameController.text;
-                        UserData.email = emailController.text;
-                        UserData.password = passwordController.text;
-                        Navigator.pop(context);
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          String name = nameController.text.trim();
+                          String email = emailController.text.trim();
+                          String password = passwordController.text.trim();
+
+                          try {
+                            UserCredential userCredential =
+                            await _auth.createUserWithEmailAndPassword(
+                              email: email,
+                              password: password,
+                            );
+
+                            await userCredential.user?.updateDisplayName(name);
+
+                            UserData.name = name;
+                            UserData.email = email;
+                            UserData.password = password;
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Account created successfully!')),
+                            );
+
+                            Navigator.pop(context);
+                          } on FirebaseAuthException catch (e) {
+                            String message = '';
+                            if (e.code == 'weak-password') {
+                              message = 'Password too weak';
+                            } else if (e.code == 'email-already-in-use') {
+                              message = 'Email already exists';
+                            } else {
+                              message = e.message ?? 'Error occurred';
+                            }
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(SnackBar(content: Text(message)));
+                          } catch (e) {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(SnackBar(content: Text('Error: $e')));
+                          }
+                        }
                       },
                       child: const Text(
                         "Sign up",
@@ -140,6 +201,7 @@ class SignupPage extends StatelessWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }

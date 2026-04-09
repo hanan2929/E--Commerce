@@ -141,68 +141,67 @@ class _NewArrivalsPageState extends State<NewArrivalsPage> {
       "name": "New Balance Grey hoodie",
       "price": "\$79"
     },
-      {
-        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7oPzRyUnqKv-CeY8R4vKqj2z48LKXa-W5Sw&s",
-        "name": "Nike Red Hoodie",
-        "price": "\$145"
-      },
-      {
-        "image": "https://i.pinimg.com/736x/6f/05/8b/6f058b4c1b26f79f1c24300c62f841d6.jpg",
-        "name": "Puma Blue T-Shirt",
-        "price": "\$80"
-      },
-      {
-        "image": "https://dafakar.com/cdn/shop/files/3stripBlackAdidasLogoHoodiewhite_500x.jpg",
-        "name": "Adidas Black Hoodie",
-        "price": "\$120"
-      },
-      {
-        "image": "https://img01.ztat.net/article/spp-media-p1/6839e6c8081a4894acce745ecf6bb925/ab9c90f4396745bd9ec2a63d9407797f.jpg",
-        "name": "Jordan White Jacket",
-        "price": "\$160"
-      },
-      {
-        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7WmKOGW9EHo9Cs2odhVyFQcWq5U7L5sPQKw&s",
-        "name": "Gucci Green T-Shirt",
-        "price": "\$200"
-      },
-      {
-        "image": "https://customfreaks.store/wp-content/uploads/2022/02/133_12019674-4234-424a-b43e-1c11994364e6.png",
-        "name": "LV Brown Jacket",
-        "price": "\$250"
-      },
-      {
-        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTRuMBminBOeNaTWdu5f1Rw22mhcu-geZgxRA&s",
-        "name": "New Balance Gray Trouser",
-        "price": "\$110"
-      },
-      {
-        "image": "https://amiri.com/cdn/shop/files/7cb19c81-71f4-4a1f-b794-ef29b276edbf_grande.jpg",
-        "name": "Amiri Black Shirt",
-        "price": "\$180"
-      },
-      {
-        "image": "https://www.sportsdirect.com/images/products/42229099_h.jpg",
-        "name": "Reebok Blue T-Shirt",
-        "price": "\$75"
-      },
-      {
-        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZGIe5l4Mrx5Vba8nQzyyx6cb45JLn7TYDGg&s",
-        "name": "Fila Navy Tracksuit",
-        "price": "\$130"
-      },
-      {
-        "image": "https://www.kershkicks.co.uk/cdn/shop/files/Screenshot_2024-07-12_at_9.11.59_pm.png",
-        "name": "Nike Yellow Running Jacket",
-        "price": "\$140"
-      },
-      {
-        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwMSj56ZPUMUzf_ZBgrx8ZUy1SDTyq6Rtn3w&s",
-        "name": "Nike Gray Sweatshirt",
-        "price": "\$150"
-      }
-
-    ];
+    {
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7oPzRyUnqKv-CeY8R4vKqj2z48LKXa-W5Sw&s",
+      "name": "Nike Red Hoodie",
+      "price": "\$145"
+    },
+    {
+      "image": "https://i.pinimg.com/736x/6f/05/8b/6f058b4c1b26f79f1c24300c62f841d6.jpg",
+      "name": "Puma Blue T-Shirt",
+      "price": "\$80"
+    },
+    {
+      "image": "https://dafakar.com/cdn/shop/files/3stripBlackAdidasLogoHoodiewhite_500x.jpg",
+      "name": "Adidas Black Hoodie",
+      "price": "\$120"
+    },
+    {
+      "image": "https://img01.ztat.net/article/spp-media-p1/6839e6c8081a4894acce745ecf6bb925/ab9c90f4396745bd9ec2a63d9407797f.jpg",
+      "name": "Jordan White Jacket",
+      "price": "\$160"
+    },
+    {
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7WmKOGW9EHo9Cs2odhVyFQcWq5U7L5sPQKw&s",
+      "name": "Gucci Green T-Shirt",
+      "price": "\$200"
+    },
+    {
+      "image": "https://customfreaks.store/wp-content/uploads/2022/02/133_12019674-4234-424a-b43e-1c11994364e6.png",
+      "name": "LV Brown Jacket",
+      "price": "\$250"
+    },
+    {
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTRuMBminBOeNaTWdu5f1Rw22mhcu-geZgxRA&s",
+      "name": "New Balance Gray Trouser",
+      "price": "\$110"
+    },
+    {
+      "image": "https://amiri.com/cdn/shop/files/7cb19c81-71f4-4a1f-b794-ef29b276edbf_grande.jpg",
+      "name": "Amiri Black Shirt",
+      "price": "\$180"
+    },
+    {
+      "image": "https://www.sportsdirect.com/images/products/42229099_h.jpg",
+      "name": "Reebok Blue T-Shirt",
+      "price": "\$75"
+    },
+    {
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZGIe5l4Mrx5Vba8nQzyyx6cb45JLn7TYDGg&s",
+      "name": "Fila Navy Tracksuit",
+      "price": "\$130"
+    },
+    {
+      "image": "https://www.kershkicks.co.uk/cdn/shop/files/Screenshot_2024-07-12_at_9.11.59_pm.png",
+      "name": "Nike Yellow Running Jacket",
+      "price": "\$140"
+    },
+    {
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwMSj56ZPUMUzf_ZBgrx8ZUy1SDTyq6Rtn3w&s",
+      "name": "Nike Gray Sweatshirt",
+      "price": "\$150"
+    }
+  ];
 
   @override
   Widget build(BuildContext context) {

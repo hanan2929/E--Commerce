@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'wishlist_data.dart';
+import 'checkout.dart';
 
 class BuyPage extends StatefulWidget {
   final Map<String, String> product;
@@ -118,32 +119,24 @@ class _BuyPageState extends State<BuyPage> {
                 "This is a high-quality product from our premium collection. Perfect for your daily needs and stylish look.",
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
-              const SizedBox(height: 40),
-              SizedBox(
-                width: double.infinity,
-                height: 60,
-                child: ElevatedButton(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Order Placed Successfully!")),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                  child: const Text(
-                    "Confirm Purchase",
-                    style: TextStyle(fontSize: 20, color: Colors.white),
-                  ),
+                   ElevatedButton(onPressed: () {
+                     Navigator.push(context, MaterialPageRoute(builder: (context) => const CheckoutPage()));
+                   },
+                       style: ElevatedButton.styleFrom(
+                         backgroundColor: Colors.deepPurple,
+                         minimumSize: Size(double.infinity, 50),
+                       ),
+                     child: Text("Checkout",
+                   style: TextStyle(
+                     color: Colors.white,
+                     fontSize: 18,
+                     fontWeight: FontWeight.bold,
+                   ),
+                   ))
+          ],
                 ),
               ),
-            ],
           ),
-        ),
-      ),
-    );
+        );
   }
 }

@@ -11,21 +11,21 @@ class PersnolprofilePage extends StatefulWidget {
 class _PersnolprofilePageState extends State<PersnolprofilePage> {
   bool _isEditing = false;
   late TextEditingController _nameController;
-  late TextEditingController _contactController;
+  late TextEditingController _passwordController;
   late TextEditingController _emailController;
 
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: UserData.name);
-    _contactController = TextEditingController(text: UserData.contact);
+    _passwordController = TextEditingController(text: UserData.password);
     _emailController = TextEditingController(text: UserData.email);
   }
 
   @override
   void dispose() {
     _nameController.dispose();
-    _contactController.dispose();
+    _passwordController.dispose();
     _emailController.dispose();
     super.dispose();
   }
@@ -35,7 +35,7 @@ class _PersnolprofilePageState extends State<PersnolprofilePage> {
       if (_isEditing) {
         // Save data to UserData when switching back from edit mode
         UserData.name = _nameController.text;
-        UserData.contact = _contactController.text;
+        UserData.password = _passwordController.text;
         UserData.email = _emailController.text;
       }
       _isEditing = !_isEditing;
@@ -84,10 +84,10 @@ class _PersnolprofilePageState extends State<PersnolprofilePage> {
                   Icons.person, "Name", _nameController, _isEditing),
               const SizedBox(height: 25),
               _buildProfileInfo(
-                  Icons.contact_page, "Contact No.", _contactController, _isEditing),
+                  Icons.email, "E-mail", _emailController, _isEditing),
               const SizedBox(height: 25),
               _buildProfileInfo(
-                  Icons.email, "E-mail", _emailController, _isEditing),
+                  Icons.lock, "Password", _passwordController, _isEditing),
             ],
           ),
         ),

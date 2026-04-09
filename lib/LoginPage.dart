@@ -1,13 +1,49 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'HomePage.dart';
 import 'forgot.dart';
 import 'signup.dart';
 import 'userdata.dart';
 
-class LoginPage extends StatelessWidget {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+class LoginPage extends StatefulWidget {
   LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  final formKey = GlobalKey<FormState>();
+
+  bool isLoading = false;
+
+  Future<void> _signIn() async {
+    if (!formKey.currentState!.validate()) return;
+
+    setState(() => isLoading = true);
+
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
+    }
+    catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Login failed")),
+      );
+    }
+    finally {
+      setState(() => isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +74,9 @@ class LoginPage extends StatelessWidget {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(25),
-              child: Column(
+              child: Form(
+                key: formKey,
+                child: Column(
                 children: [
                   const Text(
                     "Welcome",
@@ -54,8 +92,14 @@ class LoginPage extends StatelessWidget {
                     style: TextStyle(color: Colors.grey),
                   ),
                   const SizedBox(height: 20),
-                  TextField(
-                    controller: nameController,
+                  TextFormField(
+                    controller: emailController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Enter email";
+                      }
+                      return null;
+                    },
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
@@ -73,8 +117,14 @@ class LoginPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  TextField(
+                  TextFormField(
                     controller: passwordController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Enter password";
+                      }
+                      return null;
+                    },
                     obscureText: true,
                     decoration: InputDecoration(
                       filled: true,
@@ -120,19 +170,7 @@ class LoginPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(30),
                         ),
                       ),
-                      onPressed: () {
-                        if ((nameController.text == UserData.name || nameController.text == UserData.email) &&
-                            passwordController.text == UserData.password) {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) =>  HomePage()),
-                          );
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Invalid username/email or password")),
-                          );
-                        }
-                      },
+                      onPressed: _signIn,
                       child: const Text(
                         "Sign in",
                         style: TextStyle(fontSize: 25, color: Colors.white),
@@ -160,18 +198,19 @@ class LoginPage extends StatelessWidget {
                         },
                         child: const Text(
                           "Sign up",
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.deepPurple,
-                          ),
-                        ),
-                      )
-                    ],
-                  )
-                ],
-              ),
-            )
+                           style: TextStyle(
+                             fontSize: 15,
+                             fontWeight: FontWeight.bold,
+                             color: Colors.deepPurple,
+                           ),
+                         ),
+                       )
+                     ],
+                   )
+                 ],
+               ),
+             )
+            ),
           ],
         ),
       ),
