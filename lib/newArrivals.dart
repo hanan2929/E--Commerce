@@ -221,9 +221,9 @@ class _NewArrivalsPageState extends State<NewArrivalsPage> {
         data.forEach((key, value) {
           final item = value as Map<dynamic, dynamic>;
           fetched.add({
-            "name": (item['title'] ?? "New Arrival").toString(),
-            "price": (item['price'] ?? "Contact for price").toString(),
-            "image": (item['image'] ?? "new arrival").toString(),
+            "name": (item['title'] ?? "...").toString(),
+            "price": (item['price'] ?? "...").toString(),
+            "image": (item['image'] ?? "...").toString(),
           });
         });
         setState(() {
