@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'final.dart';
 
 class CheckoutPage extends StatelessWidget {
   const CheckoutPage ({super.key});
@@ -98,6 +99,24 @@ class CheckoutPage extends StatelessWidget {
               ),
             ),
           ),
+          SizedBox(height: 200),
+          ElevatedButton(onPressed: ()
+              { Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const FinalPage()),
+              );
+
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple
+              ),
+              child: Text("Confirm order",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold)
+              )
+          )
         ],
       ),
           ),

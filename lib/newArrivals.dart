@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'wishlist_data.dart';
 import 'Buy.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class NewArrivalsPage extends StatefulWidget {
   const NewArrivalsPage({super.key});
@@ -10,7 +11,7 @@ class NewArrivalsPage extends StatefulWidget {
 }
 
 class _NewArrivalsPageState extends State<NewArrivalsPage> {
-  final List<Map<String, String>> products = [
+  final List<Map<String, String>> staticProducts = [
     {
       "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwMSj56ZPUMUzf_ZBgrx8ZUy1SDTyq6Rtn3w&s",
       "name": "Nike Sportswear Club Fleece",
@@ -203,10 +204,41 @@ class _NewArrivalsPageState extends State<NewArrivalsPage> {
     }
   ];
 
+  List<Map<String, String>> firebaseProducts = [];
+  final DatabaseReference databaseRef = FirebaseDatabase.instance.ref('Post');
+
+  @override
+  void initState() {
+    super.initState();
+    _listenToFirebase();
+  }
+
+  void _listenToFirebase() {
+    databaseRef.onValue.listen((event) {
+      final data = event.snapshot.value as Map<dynamic, dynamic>?;
+      if (data != null) {
+        final List<Map<String, String>> fetched = [];
+        data.forEach((key, value) {
+          final item = value as Map<dynamic, dynamic>;
+          fetched.add({
+            "name": (item['title'] ?? "New Arrival").toString(),
+            "price": (item['price'] ?? "Contact for price").toString(),
+            "image": (item['image'] ?? "new arrival").toString(),
+          });
+        });
+        setState(() {
+          firebaseProducts = fetched.reversed.toList();
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final List<Map<String, String>> allProducts = [...firebaseProducts, ...staticProducts];
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF3E5F5), // Light purple background
+      backgroundColor: const Color(0xFFF3E5F5),
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
@@ -241,7 +273,7 @@ class _NewArrivalsPageState extends State<NewArrivalsPage> {
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15),
-                    borderSide: BorderSide(color: Colors.deepPurple.withOpacity(0.2)),
+                    borderSide: const BorderSide(color: Color(0x33673AB7)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15),
@@ -256,7 +288,7 @@ class _NewArrivalsPageState extends State<NewArrivalsPage> {
               child: GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: products.length,
+                itemCount: allProducts.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 15,
@@ -264,18 +296,18 @@ class _NewArrivalsPageState extends State<NewArrivalsPage> {
                   childAspectRatio: 0.75,
                 ),
                 itemBuilder: (context, index) {
-                  final product = products[index];
+                  final product = allProducts[index];
                   bool isWishlisted = WishlistData.wishlistItems.any((e) => e['name'] == product['name']);
 
                   return Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
+                      boxShadow: const [
                         BoxShadow(
-                          color: Colors.deepPurple.withOpacity(0.1),
-                          spreadRadius: 1,
+                          color: Color(0x1A673AB7),
                           blurRadius: 10,
+                          spreadRadius: 1,
                         )
                       ],
                     ),
@@ -287,12 +319,16 @@ class _NewArrivalsPageState extends State<NewArrivalsPage> {
                             children: [
                               Container(
                                 padding: const EdgeInsets.all(15),
-                                decoration: BoxDecoration(
-                                  color: Colors.deepPurple.withOpacity(0.05),
-                                  borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                                decoration: const BoxDecoration(
+                                  color: Color(0x0D673AB7),
+                                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                                 ),
                                 child: Center(
-                                  child: Image.network(product["image"]!, fit: BoxFit.contain),
+                                  child: Image.network(
+                                    product["image"]!, 
+                                    fit: BoxFit.contain,
+                                    errorBuilder: (context, error, stackTrace) => const Icon(Icons.shopping_bag, size: 50, color: Colors.deepPurple),
+                                  ),
                                 ),
                               ),
                               Positioned(
@@ -359,7 +395,6 @@ class _NewArrivalsPageState extends State<NewArrivalsPage> {
                 },
               ),
             ),
-            const SizedBox(height: 20),
           ],
         ),
       ),
