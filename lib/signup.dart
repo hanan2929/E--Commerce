@@ -11,6 +11,7 @@ class SignupPage extends StatefulWidget {
 
 class _SignupPageState extends State<SignupPage> {
 
+  bool isLoading = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -139,8 +140,13 @@ class _SignupPageState extends State<SignupPage> {
                           borderRadius: BorderRadius.circular(30),
                         ),
                       ),
-                      onPressed: () async {
+                      onPressed: isLoading
+                          ? null
+                          : () async {
                         if (_formKey.currentState!.validate()) {
+                          setState(() {
+                            isLoading = true;
+                          });
                           String name = nameController.text.trim();
                           String email = emailController.text.trim();
                           String password = passwordController.text.trim();
@@ -179,8 +185,20 @@ class _SignupPageState extends State<SignupPage> {
                                 .showSnackBar(SnackBar(content: Text('Error: $e')));
                           }
                         }
+                        setState(() {
+                          isLoading = false;
+                        });
                       },
-                      child: const Text(
+                      child: isLoading
+                          ? const SizedBox(
+                        height: 22,
+                        width: 22,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                          : const Text(
                         "Sign up",
                         style: TextStyle(fontSize: 25, color: Colors.white),
                       ),

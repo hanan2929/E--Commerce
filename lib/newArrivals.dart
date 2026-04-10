@@ -206,11 +206,24 @@ class _NewArrivalsPageState extends State<NewArrivalsPage> {
 
   List<Map<String, String>> firebaseProducts = [];
   final DatabaseReference databaseRef = FirebaseDatabase.instance.ref('Post');
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = "";
 
   @override
   void initState() {
     super.initState();
     _listenToFirebase();
+    _searchController.addListener(() {
+      setState(() {
+        _searchQuery = _searchController.text;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   void _listenToFirebase() {
@@ -236,6 +249,9 @@ class _NewArrivalsPageState extends State<NewArrivalsPage> {
   @override
   Widget build(BuildContext context) {
     final List<Map<String, String>> allProducts = [...firebaseProducts, ...staticProducts];
+    final List<Map<String, String>> filteredProducts = allProducts.where((product) {
+      return product['name']!.toLowerCase().contains(_searchQuery.toLowerCase());
+    }).toList();
 
     return Scaffold(
       backgroundColor: const Color(0xFFF3E5F5),
@@ -261,6 +277,7 @@ class _NewArrivalsPageState extends State<NewArrivalsPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: TextField(
+                controller: _searchController,
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.white,
@@ -288,7 +305,7 @@ class _NewArrivalsPageState extends State<NewArrivalsPage> {
               child: GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: allProducts.length,
+                itemCount: filteredProducts.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 15,
@@ -296,7 +313,7 @@ class _NewArrivalsPageState extends State<NewArrivalsPage> {
                   childAspectRatio: 0.75,
                 ),
                 itemBuilder: (context, index) {
-                  final product = allProducts[index];
+                  final product = filteredProducts[index];
                   bool isWishlisted = WishlistData.wishlistItems.any((e) => e['name'] == product['name']);
 
                   return Container(

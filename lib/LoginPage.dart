@@ -18,6 +18,7 @@ class _LoginPageState extends State<LoginPage> {
 
   final formKey = GlobalKey<FormState>();
 
+  bool isPasswordHidden = true;
   bool isLoading = false;
 
   Future<void> _signIn() async {
@@ -125,13 +126,25 @@ class _LoginPageState extends State<LoginPage> {
                       }
                       return null;
                     },
-                    obscureText: true,
+                    obscureText: isPasswordHidden,
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
                       labelText: "Password",
                       hintText: "Enter Password",
                       prefixIcon: const Icon(Icons.lock, color: Colors.deepPurple),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          isPasswordHidden
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            isPasswordHidden = !isPasswordHidden;
+                          });
+                        },
+                      ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
                         borderSide: BorderSide(color: Colors.deepPurple.withOpacity(0.2)),
@@ -170,12 +183,21 @@ class _LoginPageState extends State<LoginPage> {
                           borderRadius: BorderRadius.circular(30),
                         ),
                       ),
-                      onPressed: _signIn,
-                      child: const Text(
+                      onPressed: isLoading ? null : _signIn,
+                      child: isLoading
+                          ? const SizedBox(
+                        height: 22,
+                        width: 22,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                          : const Text(
                         "Sign in",
                         style: TextStyle(fontSize: 25, color: Colors.white),
                       ),
-                    ),
+                    )
                   ),
                   const SizedBox(height: 50),
                   Row(
