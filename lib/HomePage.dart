@@ -249,7 +249,7 @@ class _HomeContentState extends State<HomeContent> {
                     filled: true,
                     fillColor: Colors.white,
                     labelText: "Search",
-                    hintText: "Search your favorite shoes",
+                    hintText: "Search your favorite article",
                     prefixIcon: const Icon(Icons.search, color: Colors.deepPurple),
                     suffixIcon: const Icon(Icons.mic, color: Colors.deepPurple),
                     enabledBorder: OutlineInputBorder(
@@ -362,6 +362,15 @@ class _HomeContentState extends State<HomeContent> {
                           )
                         ],
                       ),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BuyPage(product: product),
+                              ),
+                            );
+                          },
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -404,6 +413,7 @@ class _HomeContentState extends State<HomeContent> {
                           ),
                           Padding(
                             padding: const EdgeInsets.all(12),
+
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -414,11 +424,7 @@ class _HomeContentState extends State<HomeContent> {
                                   children: [
                                     Text(product["price"]!, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.deepPurple)),
                                     GestureDetector(
-                                      onTap: () async {
-                                        await Navigator.push(context, MaterialPageRoute(builder: (context) => BuyPage(product: product)));
-                                        setState(() {});
-                                        widget.onWishlistChanged();
-                                      },
+
                                       child: Container(
                                         padding: const EdgeInsets.all(5),
                                         decoration: BoxDecoration(
@@ -426,14 +432,16 @@ class _HomeContentState extends State<HomeContent> {
                                           borderRadius: BorderRadius.circular(8),
                                         ),
                                         child: const Icon(Icons.add, color: Colors.white, size: 18),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                       ),
+                                     ),
+                                   ],
+                                 ),
+                               ],
+                             ),
                             ),
-                          ),
-                        ],
+                        ]
+                      ),
+
                       ),
                     );
                   },

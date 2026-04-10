@@ -311,6 +311,15 @@ class _NewArrivalsPageState extends State<NewArrivalsPage> {
                         )
                       ],
                     ),
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => BuyPage(product: product),
+                            ),
+                          );
+                        },
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -365,17 +374,7 @@ class _NewArrivalsPageState extends State<NewArrivalsPage> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(product["price"]!, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.deepPurple)),
-                                  GestureDetector(
-                                    onTap: () async {
-                                      await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => BuyPage(product: product),
-                                        ),
-                                      );
-                                      setState(() {});
-                                    },
-                                    child: Container(
+                                   Container(
                                       padding: const EdgeInsets.all(5),
                                       decoration: BoxDecoration(
                                         color: Colors.deepPurple,
@@ -383,7 +382,6 @@ class _NewArrivalsPageState extends State<NewArrivalsPage> {
                                       ),
                                       child: const Icon(Icons.add, color: Colors.white, size: 18),
                                     ),
-                                  ),
                                 ],
                               ),
                             ],
@@ -391,6 +389,7 @@ class _NewArrivalsPageState extends State<NewArrivalsPage> {
                         ),
                       ],
                     ),
+                      ),
                   );
                 },
               ),
