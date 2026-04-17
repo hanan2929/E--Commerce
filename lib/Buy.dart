@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'wishlist_data.dart';
 import 'checkout.dart';
+import 'product_model.dart';
 
 class BuyPage extends StatefulWidget {
-  final Map<String, String> product;
-
+  final Product product;
   const BuyPage({super.key, required this.product});
 
   @override
@@ -14,14 +14,13 @@ class BuyPage extends StatefulWidget {
 class _BuyPageState extends State<BuyPage> {
   @override
   Widget build(BuildContext context) {
-    bool isWishlisted = WishlistData.wishlistItems.any((e) => e['name'] == widget.product['name']);
+    bool isWishlisted = WishlistData.wishlistItems.any((e) => e.title == widget.product.title);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF3E5F5), // Light purple background
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
-        iconTheme: const IconThemeData(color: Colors.deepPurple),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        iconTheme: Theme.of(context).appBarTheme.iconTheme,
         title: const Text(
           "Checkout",
           style: TextStyle(
@@ -41,7 +40,7 @@ class _BuyPageState extends State<BuyPage> {
               Container(
                 padding: const EdgeInsets.all(15),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
@@ -53,11 +52,8 @@ class _BuyPageState extends State<BuyPage> {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(15),
-                  child: Image.network(
-                    widget.product['image']!,
-                    width: double.infinity,
-                    fit: BoxFit.contain,
-                  ),
+                  child: Image.network(widget.product.thumbnail
+                  )
                 ),
               ),
               const SizedBox(height: 25),
@@ -66,11 +62,11 @@ class _BuyPageState extends State<BuyPage> {
                 children: [
                   Expanded(
                     child: Text(
-                      widget.product['name']!,
-                      style: const TextStyle(
+              widget.product.title,
+                      style:  TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.deepPurple),
+                          color: Theme.of(context).textTheme.titleLarge?.color ?? Colors.deepPurple),
                     ),
                   ),
                   IconButton(
@@ -100,7 +96,7 @@ class _BuyPageState extends State<BuyPage> {
               ),
               const SizedBox(height: 10),
               Text(
-                "Price: ${widget.product['price']}",
+                "Price: ${widget.product.price.toString()}",
                 style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -115,28 +111,32 @@ class _BuyPageState extends State<BuyPage> {
                     color: Colors.deepPurple),
               ),
               const SizedBox(height: 10),
-              const Text(
-                "This is a high-quality product from our premium collection. Perfect for your daily needs and stylish look.",
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+              Text(
+                  widget.product.description,
+                style: const TextStyle(fontSize: 16, color: Colors.grey),
               ),
-                   ElevatedButton(onPressed: () {
-                     Navigator.push(context, MaterialPageRoute(builder: (context) => const CheckoutPage()));
-                   },
-                       style: ElevatedButton.styleFrom(
-                         backgroundColor: Colors.deepPurple,
-                         minimumSize: Size(double.infinity, 50),
-                       ),
-                     child: Text("Checkout",
-                   style: TextStyle(
-                     color: Colors.white,
-                     fontSize: 18,
-                     fontWeight: FontWeight.bold,
-                   ),
-                   ))
-          ],
+              const SizedBox(height: 30),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const CheckoutPage()));
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurple,
+                  minimumSize: const Size(double.infinity, 50),
                 ),
-              ),
+                child: const Text(
+                  "Checkout",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              )
+            ],
           ),
-        );
+        ),
+      ),
+    );
   }
 }

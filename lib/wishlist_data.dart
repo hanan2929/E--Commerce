@@ -1,13 +1,15 @@
-class WishlistData {
-  static List<Map<String, String>> wishlistItems = [];
+import 'product_model.dart';
 
-  static void addItem(Map<String, String> item) {
-    if (!wishlistItems.any((e) => e['name'] == item['name'])) {
+class WishlistData {
+  static List<Product> wishlistItems = [];
+
+  static void addItem(Product item) {
+    if (!wishlistItems.any((e) => e.title == item.title)) {
       wishlistItems.add(item);
     }
   }
 
-  static void removeItem(Map<String, String> item) {
-    wishlistItems.removeWhere((e) => e['name'] == item['name']);
+  static void removeItem(Product item) {
+    wishlistItems.removeWhere((e) => e.title == item.title);
   }
 }

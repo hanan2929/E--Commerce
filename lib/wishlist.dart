@@ -13,9 +13,8 @@ class _WishlistPageState extends State<WishlistPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF3E5F5), // Light purple background
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
         title: const Text(
           "Wishlist",
@@ -26,7 +25,7 @@ class _WishlistPageState extends State<WishlistPage> {
               color: Colors.deepPurple),
         ),
         centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.deepPurple),
+        iconTheme: Theme.of(context).appBarTheme.iconTheme,
       ),
       body: WishlistData.wishlistItems.isEmpty
           ? const Center(
@@ -45,23 +44,28 @@ class _WishlistPageState extends State<WishlistPage> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
+                  color: Theme.of(context).cardColor,
                   child: ListTile(
                     contentPadding: const EdgeInsets.all(10),
                     leading: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: Image.network(
-                        item['image']!,
+                        item.thumbnail,
                         width: 60,
                         height: 60,
                         fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => const Icon(Icons.shopping_bag, size: 40, color: Colors.deepPurple),
                       ),
                     ),
                     title: Text(
-                      item['name']!,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      item.title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).textTheme.titleMedium?.color,
+                      ),
                     ),
                     subtitle: Text(
-                      item['price']!,
+                      "\$${item.price}",
                       style: const TextStyle(
                           color: Colors.deepPurple, fontWeight: FontWeight.bold),
                     ),

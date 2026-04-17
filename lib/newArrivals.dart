@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'wishlist_data.dart';
 import 'Buy.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'product_model.dart';
 
 class NewArrivalsPage extends StatefulWidget {
   const NewArrivalsPage({super.key});
@@ -160,47 +161,47 @@ class _NewArrivalsPageState extends State<NewArrivalsPage> {
     {
       "image": "https://img01.ztat.net/article/spp-media-p1/6839e6c8081a4894acce745ecf6bb925/ab9c90f4396745bd9ec2a63d9407797f.jpg",
       "name": "Jordan White Jacket",
-      "price": "\$160"
+      "price": "160"
     },
     {
       "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7WmKOGW9EHo9Cs2odhVyFQcWq5U7L5sPQKw&s",
       "name": "Gucci Green T-Shirt",
-      "price": "\$200"
+      "price": "200"
     },
     {
       "image": "https://customfreaks.store/wp-content/uploads/2022/02/133_12019674-4234-424a-b43e-1c11994364e6.png",
       "name": "LV Brown Jacket",
-      "price": "\$250"
+      "price": "250"
     },
     {
       "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTRuMBminBOeNaTWdu5f1Rw22mhcu-geZgxRA&s",
       "name": "New Balance Gray Trouser",
-      "price": "\$110"
+      "price": "110"
     },
     {
       "image": "https://amiri.com/cdn/shop/files/7cb19c81-71f4-4a1f-b794-ef29b276edbf_grande.jpg",
       "name": "Amiri Black Shirt",
-      "price": "\$180"
+      "price": "180"
     },
     {
       "image": "https://www.sportsdirect.com/images/products/42229099_h.jpg",
-      "name": "Reebok Blue T-Shirt",
-      "price": "\$75"
+      "name": "Rebook Blue T-Shirt",
+      "price": "75"
     },
     {
       "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZGIe5l4Mrx5Vba8nQzyyx6cb45JLn7TYDGg&s",
       "name": "Fila Navy Tracksuit",
-      "price": "\$130"
+      "price": " 130"
     },
     {
       "image": "https://www.kershkicks.co.uk/cdn/shop/files/Screenshot_2024-07-12_at_9.11.59_pm.png",
       "name": "Nike Yellow Running Jacket",
-      "price": "\$140"
+      "price": "140"
     },
     {
       "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwMSj56ZPUMUzf_ZBgrx8ZUy1SDTyq6Rtn3w&s",
       "name": "Nike Gray Sweatshirt",
-      "price": "\$150"
+      "price": "150"
     }
   ];
 
@@ -233,15 +234,20 @@ class _NewArrivalsPageState extends State<NewArrivalsPage> {
         final List<Map<String, String>> fetched = [];
         data.forEach((key, value) {
           final item = value as Map<dynamic, dynamic>;
+          String imagePath = (item['image'] ?? "").toString();
+          
           fetched.add({
             "name": (item['title'] ?? "...").toString(),
             "price": (item['price'] ?? "...").toString(),
-            "image": (item['image'] ?? "...").toString(),
+            "description": (item['description'] ?? "").toString(),
+            "image": imagePath.isNotEmpty ? imagePath : "",
           });
         });
-        setState(() {
-          firebaseProducts = fetched.reversed.toList();
-        });
+        if (mounted) {
+          setState(() {
+            firebaseProducts = fetched.reversed.toList();
+          });
+        }
       }
     });
   }
@@ -254,11 +260,10 @@ class _NewArrivalsPageState extends State<NewArrivalsPage> {
     }).toList();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF3E5F5),
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
-        iconTheme: const IconThemeData(color: Colors.deepPurple),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        iconTheme: Theme.of(context).appBarTheme.iconTheme,
         title: const Text(
           "New Arrivals",
           style: TextStyle(
@@ -280,7 +285,7 @@ class _NewArrivalsPageState extends State<NewArrivalsPage> {
                 controller: _searchController,
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: Theme.of(context).cardColor,
                   labelText: "Search",
                   hintText: "Search here",
                   prefixIcon: const Icon(Icons.search, color: Colors.deepPurple),
@@ -313,12 +318,21 @@ class _NewArrivalsPageState extends State<NewArrivalsPage> {
                   childAspectRatio: 0.75,
                 ),
                 itemBuilder: (context, index) {
-                  final product = filteredProducts[index];
-                  bool isWishlisted = WishlistData.wishlistItems.any((e) => e['name'] == product['name']);
+                  final productMap = filteredProducts[index];
+                  final product = Product(
+                    id: index,
+                    title: productMap["name"] ?? "",
+                    description: productMap["description"] ?? "",
+                    category: "New Arrival",
+                    price: double.tryParse(productMap["price"]?.replaceAll("\$", "") ?? "0") ?? 0,
+                    rating: 4.5,
+                    thumbnail: productMap["image"] ?? "",
+                  );
+                  bool isWishlisted = WishlistData.wishlistItems.any((e) => e.title == product.title);
 
                   return Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: const [
                         BoxShadow(
@@ -351,7 +365,7 @@ class _NewArrivalsPageState extends State<NewArrivalsPage> {
                                 ),
                                 child: Center(
                                   child: Image.network(
-                                    product["image"]!, 
+                                    product.thumbnail, 
                                     fit: BoxFit.contain,
                                     errorBuilder: (context, error, stackTrace) => const Icon(Icons.shopping_bag, size: 50, color: Colors.deepPurple),
                                   ),
@@ -385,12 +399,12 @@ class _NewArrivalsPageState extends State<NewArrivalsPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(product["name"]!, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis),
+                              Text(product.title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis),
                               const SizedBox(height: 5),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(product["price"]!, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.deepPurple)),
+                                  Text(productMap["price"]!, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.deepPurple)),
                                    Container(
                                       padding: const EdgeInsets.all(5),
                                       decoration: BoxDecoration(

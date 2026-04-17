@@ -17,6 +17,8 @@ import 'persnolprofile.dart';
 import 'wishlist_data.dart';
 import 'Buy.dart';
 import 'addpost.dart';
+import 'product_list.dart';
+import 'product_model.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -38,7 +40,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF3E5F5),
       body: PageView(
         controller: _pageController,
         onPageChanged: (index) {
@@ -56,7 +57,7 @@ class _HomePageState extends State<HomePage> {
           showSelectedLabels: true,
           showUnselectedLabels: true,
           type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.white,
+          backgroundColor: Theme.of(context).bottomNavigationBarTheme.backgroundColor,
           selectedItemColor: Colors.deepPurple,
           unselectedItemColor: Colors.grey,
           elevation: 10,
@@ -152,8 +153,8 @@ class _HomeContentState extends State<HomeContent> {
       backgroundColor: Colors.transparent,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
-        iconTheme: const IconThemeData(color: Colors.black),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        iconTheme: Theme.of(context).appBarTheme.iconTheme,
         title: const Text(
           "Ecommerce",
           style: TextStyle(
@@ -194,6 +195,18 @@ class _HomeContentState extends State<HomeContent> {
             ),
             ListTile(
               leading: const Icon(Icons.shopping_cart),
+              title: const Text("Products"),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const ProductListPage(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.shopping_cart),
               title: const Text('Cart'),
               onTap: () => Navigator.pop(context),
             ),
@@ -227,6 +240,7 @@ class _HomeContentState extends State<HomeContent> {
               leading: const Icon(Icons.add, color: Colors.green),
               title: const Text('Add new item', style: TextStyle(color: Colors.green)),
               onTap: () {
+                Navigator.pop(context);
                 Navigator.push(context, MaterialPageRoute(builder: (context) =>  AddpostPage()));
               },
             ),
@@ -247,7 +261,7 @@ class _HomeContentState extends State<HomeContent> {
                   controller: _searchController,
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: Colors.white,
+                    fillColor: Theme.of(context).cardColor,
                     labelText: "Search",
                     hintText: "Search your favorite article",
                     prefixIcon: const Icon(Icons.search, color: Colors.deepPurple),
@@ -297,7 +311,7 @@ class _HomeContentState extends State<HomeContent> {
                         padding: const EdgeInsets.all(10),
                         width: 80,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Theme.of(context).cardColor,
                           borderRadius: BorderRadius.circular(15),
                           boxShadow: const [
                             BoxShadow(
@@ -348,17 +362,18 @@ class _HomeContentState extends State<HomeContent> {
                   ),
                   itemBuilder: (context, index) {
                     final product = _filteredProducts[index];
-                    bool isWishlisted = WishlistData.wishlistItems.any((e) => e['name'] == product['name']);
+                    bool isWishlisted = WishlistData.wishlistItems
+                        .any((e) => e.title == (product["name"] ?? ""));
 
                     return Container(
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: const [
                           BoxShadow(
                             color: Color(0x1A673AB7),
-                            spreadRadius: 1,
                             blurRadius: 10,
+                            spreadRadius: 1,
                           )
                         ],
                       ),
@@ -367,7 +382,17 @@ class _HomeContentState extends State<HomeContent> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => BuyPage(product: product),
+                                builder: (context) => BuyPage(
+                                  product: Product(
+                                    id: 0,
+                                    title: product["name"] ?? "",
+                                    description: product["description"] ?? "",
+                                    category: "Home",
+                                    price: double.tryParse(product["price"].toString().replaceAll("\$", "")) ?? 0,
+                                    rating: 4.5,
+                                    thumbnail: product["image"] ?? "",
+                                  ),
+                                )
                               ),
                             );
                           },
@@ -393,10 +418,20 @@ class _HomeContentState extends State<HomeContent> {
                                   child: GestureDetector(
                                     onTap: () {
                                       setState(() {
-                                        if (isWishlisted) {
-                                          WishlistData.removeItem(product);
+                                        final p = Product(
+                                          id: 0,
+                                          title: product["name"] ?? "",
+                                          description: product["description"] ?? "",
+                                          category: "Home",
+                                          price: double.tryParse(product["price"].toString().replaceAll("\$", "")) ?? 0,
+                                          rating: 4.5,
+                                          thumbnail: product["image"] ?? "",
+                                        );
+
+                                        if (WishlistData.wishlistItems.any((e) => e.title == p.title)) {
+                                          WishlistData.removeItem(p);
                                         } else {
-                                          WishlistData.addItem(product);
+                                          WishlistData.addItem(p);
                                         }
                                       });
                                       widget.onWishlistChanged();

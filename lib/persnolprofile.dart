@@ -45,9 +45,8 @@ class _PersnolprofilePageState extends State<PersnolprofilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF3E5F5),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
         title: const Text(
           "Profile",
@@ -72,11 +71,11 @@ class _PersnolprofilePageState extends State<PersnolprofilePage> {
           padding: const EdgeInsets.all(30),
           child: Column(
             children: [
-              const Center(
+               Center(
                 child: CircleAvatar(
                   radius: 70,
-                  backgroundColor: Colors.white,
-                  child: Icon(Icons.person, size: 80, color: Colors.deepPurple),
+                  backgroundColor: Theme.of(context).cardColor,
+                  child: const Icon(Icons.person, size: 80, color: Colors.deepPurple),
                 ),
               ),
               const SizedBox(height: 50),
@@ -100,7 +99,7 @@ class _PersnolprofilePageState extends State<PersnolprofilePage> {
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
@@ -129,10 +128,10 @@ class _PersnolprofilePageState extends State<PersnolprofilePage> {
                 isEditing
                     ? TextField(
                         controller: controller,
-                        style: const TextStyle(
+                        style:  TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                         ),
                         decoration: const InputDecoration(
                           isDense: true,
@@ -144,10 +143,10 @@ class _PersnolprofilePageState extends State<PersnolprofilePage> {
                       )
                     : Text(
                         controller.text,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                         ),
                       ),
               ],
